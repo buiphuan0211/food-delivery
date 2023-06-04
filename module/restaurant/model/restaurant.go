@@ -14,14 +14,26 @@ var (
 
 type Restaurant struct {
 	common.SQLModel `json:",inline"`
-	Name            string `json:"name" gorm:"column:name;"`
-	Addr            string `json:"addr" gorm:"column:addr;"`
+	Name            string         `json:"name" gorm:"column:name;"`
+	Addr            string         `json:"addr" gorm:"column:addr;"`
+	Logo            *common.Image  `json:"logo" gorm:"column:logo"`
+	Cover           *common.Images `json:"cover" gorm:"column:cover"`
+}
+
+func (Restaurant) TableName() string {
+	return "restaurants"
 }
 
 type RestaurantCreate struct {
 	common.SQLModel `json:",inline"`
-	Name            string `json:"name" gorm:"column:name;"`
-	Addr            string `json:"addr" gorm:"column:addr;"`
+	Name            string         `json:"name" gorm:"column:name;"`
+	Addr            string         `json:"addr" gorm:"column:addr;"`
+	Logo            *common.Image  `json:"logo" gorm:"column:logo"`
+	Cover           *common.Images `json:"cover" gorm:"column:cover"`
+}
+
+func (RestaurantCreate) TableName() string {
+	return Restaurant{}.TableName()
 }
 
 func (m *RestaurantCreate) GenObjID() {
@@ -38,16 +50,10 @@ func (m *RestaurantCreate) Validate() error {
 }
 
 type RestaurantUpdate struct {
-	Name *string `json:"name" gorm:"column:name;"`
-	Addr *string `json:"addr" gorm:"column:addr;"`
-}
-
-func (Restaurant) TableName() string {
-	return "restaurants"
-}
-
-func (RestaurantCreate) TableName() string {
-	return Restaurant{}.TableName()
+	Name  *string        `json:"name" gorm:"column:name;"`
+	Addr  *string        `json:"addr" gorm:"column:addr;"`
+	Logo  *common.Image  `json:"logo" gorm:"column:logo"`
+	Cover *common.Images `json:"cover" gorm:"column:cover"`
 }
 
 func (RestaurantUpdate) TableName() string {
