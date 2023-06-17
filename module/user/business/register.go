@@ -20,6 +20,9 @@ type RegisterBusiness struct {
 	hasher          Hasher
 }
 
+func NewRegisterBusiness(registerStorage RegisterStorage, hasher Hasher) *RegisterBusiness {
+	return &RegisterBusiness{registerStorage: registerStorage, hasher: hasher}
+}
 func (biz *RegisterBusiness) Register(ctx context.Context, data *usermodel.UserCreate) error {
 	user, _ := biz.registerStorage.FindUser(ctx, map[string]interface{}{"email": data.Email})
 	if user != nil {
