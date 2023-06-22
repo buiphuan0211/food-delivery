@@ -3,14 +3,15 @@ package main
 import (
 	"food-delivery/component/appcontext"
 	"food-delivery/component/uploadprovider"
-	"food-delivery/middleware"
 	"food-delivery/module/restaurant/transport/ginrestaurant"
 	"food-delivery/module/upload/transport/ginupload"
 	"food-delivery/module/user/transport/ginuser"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -26,40 +27,43 @@ func main() {
 
 	r := gin.Default()
 
-	s3bucketName := "food-delivery-img"
-	s3Region := "ap-southeast-2"
-	s3APIkey := "AKIA436TMGDHAGNJ6NNR"
-	s3SecretKey := "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"
-	s3Domain := "https://dm83ozfygdntq.cloudfront.net"
-	secretKey := "MY_SECRET_KEY"
-
-	s3Provider := uploadprovider.NewS3Provider(s3bucketName, s3Region, s3APIkey, s3SecretKey, s3Domain)
-
-	var appCtx = appcontext.NewAppContext(db, s3Provider, secretKey)
-
-	r.Use(middleware.Recover(appCtx))
-
 	// Nếu truy cập /static thì gin sẽ đi kiếm thư mục "./static" đọc vô
 	r.Static("/static", "./static")
 
-	r.GET("/ping", func(c *gin.Context) {
+	// Load .env file
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	var (
+		s3BucketName = os.Getenv("S3_BUCKET_NAME")
+		s3Region     = os.Getenv("S3_REGION")
+		s3APIkey     = os.Getenv("S3_API_KEY")
+		s3SecretKey  = os.Getenv("S3_SECRET_KEY")
+		s3Domain     = os.Getenv("S3_DOMAIN")
+		secretKey    = os.Getenv("SECRET_KEY")
+		s3Provider   = uploadprovider.NewS3Provider(s3BucketName, s3Region, s3APIkey, s3SecretKey, s3Domain)
+		appCtx       = appcontext.NewAppContext(db, s3Provider, secretKey)
+	)
+
+	// Setup router ...
+	v1 := r.Group("/v1")
+
+	v1.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
 
-	// Setup router ...
-	v1 := r.Group("/v1")
-
-	// Upload -------
+	// Upload
 	v1.POST("/upload", ginupload.Upload(appCtx))
 
-	// Authenticate  -------
+	// Authenticate
 	v1.POST("/register", ginuser.Register(appCtx))
 
 	v1.POST("/login", ginuser.Login(appCtx))
 
-	// Restaurant -------
+	// Restaurant
 	restaurantGroup := v1.Group("/restaurants")
 
 	restaurantGroup.POST("", ginrestaurant.CreateRestaurant(appCtx))

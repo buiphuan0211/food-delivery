@@ -6,8 +6,9 @@ import (
 	restaurantbusiness "food-delivery/module/restaurant/business"
 	restaurantmodel "food-delivery/module/restaurant/model"
 	restaurantstorage "food-delivery/module/restaurant/storgage"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func CreateRestaurant(appCtx appcontext.AppContext) gin.HandlerFunc {

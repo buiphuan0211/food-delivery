@@ -25,6 +25,7 @@ func NewAppContext(db *gorm.DB, provider uploadprovider.UploadProvider, secretKe
 		secretKey:      secretKey,
 	}
 }
+
 func (ctx *appContext) GetMainDBConnection() *gorm.DB                 { return ctx.db }
 func (ctx *appContext) UploadProvider() uploadprovider.UploadProvider { return ctx.uploadProvider }
 func (ctx *appContext) SecretKey() string                             { return ctx.secretKey }
