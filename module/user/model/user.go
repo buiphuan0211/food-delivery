@@ -21,13 +21,13 @@ type User struct {
 
 func (User) TableName() string { return "users" }
 
-func (u *User) getUserId() int {
+func (u *User) GetUserId() int {
 	return u.ID
 }
-func (u *User) getEmail() string {
+func (u *User) GetEmail() string {
 	return u.Email
 }
-func (u *User) getRole() string {
+func (u *User) GetRole() string {
 	return u.Role
 }
 

@@ -14,10 +14,12 @@ var (
 
 type Restaurant struct {
 	common.SQLModel `json:",inline"`
-	Name            string         `json:"name" gorm:"column:name;"`
-	Addr            string         `json:"addr" gorm:"column:addr;"`
-	Logo            *common.Image  `json:"logo" gorm:"column:logo"`
-	Cover           *common.Images `json:"cover" gorm:"column:cover"`
+	Name            string             `json:"name" gorm:"column:name;"`
+	Addr            string             `json:"addr" gorm:"column:addr;"`
+	Logo            *common.Image      `json:"logo" gorm:"column:logo"`
+	Cover           *common.Images     `json:"cover" gorm:"column:cover"`
+	UserId          int                `json:"-" gorm:"column:user_id"`
+	User            *common.SimpleUser `json:"user" gorm:"preload:false;"` // preload:false -> user bị insert theo khi create restaurant
 }
 
 func (Restaurant) TableName() string {
@@ -30,6 +32,7 @@ type RestaurantCreate struct {
 	Addr            string         `json:"addr" gorm:"column:addr;"`
 	Logo            *common.Image  `json:"logo" gorm:"column:logo"`
 	Cover           *common.Images `json:"cover" gorm:"column:cover"`
+	UserId          int            `json:"-" gorm:"column:user_id"`
 }
 
 func (RestaurantCreate) TableName() string {

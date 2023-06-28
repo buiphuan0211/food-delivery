@@ -19,9 +19,13 @@ func CreateRestaurant(appCtx appcontext.AppContext) gin.HandlerFunc {
 			db   = appCtx.GetMainDBConnection()
 		)
 
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+
 		if err := c.ShouldBind(&data); err != nil {
 			panic(err)
 		}
+
+		data.UserId = requester.GetUserId()
 
 		store := restaurantstorage.NewSQLStore(db)
 

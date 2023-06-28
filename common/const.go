@@ -7,3 +7,13 @@ func AppRecover() {
 		log.Println("Recover error: ", err)
 	}
 }
+
+const (
+	CurrentUser = "user"
+)
+
+type Requester interface {
+	GetUserId() int
+	GetEmail() string
+	GetRole() string
+}

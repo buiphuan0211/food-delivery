@@ -64,7 +64,8 @@ func (e *AppError) RootError() error {
 }
 
 func ErrDB(err error) *AppError {
-	return NewErrorResponse(err, "some thing wrong with DB ", err.Error(), "DB_ERROR")
+	return NewFullErrorResponse(http.StatusInternalServerError, err, "some thing went wrong with DB", err.Error(), "DB_ERROR")
+	// return NewErrorResponse(err, "some thing wrong with DB ", err.Error(), "DB_ERROR")
 }
 
 func ErrInvalidRequest(err error) *AppError {

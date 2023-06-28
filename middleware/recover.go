@@ -3,6 +3,7 @@ package middleware
 import (
 	"food-delivery/common"
 	"food-delivery/component/appcontext"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,13 +15,13 @@ func Recover(ac appcontext.AppContext) gin.HandlerFunc {
 
 				if appErr, ok := err.(*common.AppError); ok {
 					c.AbortWithStatusJSON(appErr.StatusCode, appErr)
-					panic(err)
+					//panic(err)
 					return
 				}
 
 				appErr := common.ErrInternal(err.(error))
 				c.AbortWithStatusJSON(appErr.StatusCode, appErr)
-				panic(err)
+				//panic(err)
 				return
 			}
 		}()

@@ -31,7 +31,8 @@ func (b *listRestaurantBusiness) ListRestaurant(
 	paging *common.Paging,
 	moreKeys ...string,
 ) (result []restaurantmodel.Restaurant, err error) {
-	result, err = b.store.ListDataWithCondition(ctx, filter, paging)
+	result, err = b.store.ListDataWithCondition(ctx, filter, paging, "User")
+
 	if err != nil {
 		return
 	}

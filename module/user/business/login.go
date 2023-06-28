@@ -36,23 +36,22 @@ func NewLoginBusiness(storeUser LoginStorage, tokenProvider tokenprovider.Provid
 // 4. Return token
 
 func (biz *LoginBusiness) Login(ctx context.Context, data usermodel.UserLogin) (*tokenprovider.Token, error) {
-	user, _ := biz.StoreUser.FindUser(ctx, map[string]interface{}{"email": data.Email})
-	if user != nil {
+	user, err := biz.StoreUser.FindUser(ctx, map[string]interface{}{"email": data.Email})
+	if err != nil {
 		return nil, usermodel.ErrEmailOrPasswordInvalid
 	}
 
 	passHasher := biz.hasher.Hash(data.Password + user.Salt)
 	if user.Password != passHasher {
 		return nil, usermodel.ErrEmailOrPasswordInvalid
-
 	}
 
-	payload := tokenprovider.TokenPayload{
+	tokenPayload := tokenprovider.TokenPayload{
 		UserId: user.ID,
 		Role:   user.Role,
 	}
 
-	accessToken, err := biz.tokenProvider.Generate(payload, biz.expiry)
+	accessToken, err := biz.tokenProvider.Generate(tokenPayload, biz.expiry)
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}

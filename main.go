@@ -3,15 +3,16 @@ package main
 import (
 	"food-delivery/component/appcontext"
 	"food-delivery/component/uploadprovider"
+	"food-delivery/middleware"
 	"food-delivery/module/restaurant/transport/ginrestaurant"
 	"food-delivery/module/upload/transport/ginupload"
 	"food-delivery/module/user/transport/ginuser"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -26,9 +27,6 @@ func main() {
 	db = db.Debug()
 
 	r := gin.Default()
-
-	// Nếu truy cập /static thì gin sẽ đi kiếm thư mục "./static" đọc vô
-	r.Static("/static", "./static")
 
 	// Load .env file
 	if err := godotenv.Load(".env"); err != nil {
@@ -45,6 +43,11 @@ func main() {
 		s3Provider   = uploadprovider.NewS3Provider(s3BucketName, s3Region, s3APIkey, s3SecretKey, s3Domain)
 		appCtx       = appcontext.NewAppContext(db, s3Provider, secretKey)
 	)
+
+	r.Use(middleware.Recover(appCtx))
+
+	// Nếu truy cập /static thì gin sẽ đi kiếm thư mục "./static" đọc vô
+	r.Static("/static", "./static")
 
 	// Setup router ...
 	v1 := r.Group("/v1")
@@ -63,14 +66,16 @@ func main() {
 
 	v1.POST("/login", ginuser.Login(appCtx))
 
+	v1.GET("/profile", middleware.RequiredAuth(appCtx), ginuser.Profile(appCtx))
+
 	// Restaurant
-	restaurantGroup := v1.Group("/restaurants")
+	rg := v1.Group("/restaurants", middleware.RequiredAuth(appCtx))
 
-	restaurantGroup.POST("", ginrestaurant.CreateRestaurant(appCtx))
+	rg.POST("", ginrestaurant.CreateRestaurant(appCtx))
 
-	restaurantGroup.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
+	rg.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
 
-	restaurantGroup.GET("", ginrestaurant.ListRestaurant(appCtx))
+	rg.GET("", ginrestaurant.ListRestaurant(appCtx))
 
 	r.Run()
 }

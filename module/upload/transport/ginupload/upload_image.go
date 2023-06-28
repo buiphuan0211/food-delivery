@@ -1,10 +1,10 @@
 package ginupload
 
 import (
-	"fmt"
 	"food-delivery/common"
 	"food-delivery/component/appcontext"
 	uploadbusiness "food-delivery/module/upload/business"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,8 +16,6 @@ func Upload(appCtx appcontext.AppContext) gin.HandlerFunc {
 		}
 
 		folder := c.DefaultPostForm("folder", "img") // Phân biệt loại image
-
-		fmt.Println("folder: ", folder)
 
 		file, err := fileHeader.Open()
 		if err != nil {

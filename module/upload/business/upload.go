@@ -37,7 +37,6 @@ func (biz *UploadBusiness) Upload(ctx context.Context, data []byte, folder, file
 		fmt.Println("ErrFileIsNotImage: ", err)
 		return nil, err
 	}
-	fmt.Println("width, height: ", w, h)
 
 	if strings.TrimSpace(folder) == "" {
 		folder = "img"
@@ -58,18 +57,13 @@ func (biz *UploadBusiness) Upload(ctx context.Context, data []byte, folder, file
 	img.CloudName = "s3" // should beset in provider
 	img.Extension = fileExt
 
-	fmt.Println(img)
-
 	return img, nil
 }
 
 func getImageDimension(reader io.Reader) (int, int, error) {
 	img, err := jpeg.DecodeConfig(reader)
 
-	fmt.Println("image dimensions: ", img)
-
 	if err != nil {
-		fmt.Println("error here !!!")
 		log.Println("err: ", err)
 		return 0, 0, err
 	}

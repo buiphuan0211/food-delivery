@@ -21,12 +21,16 @@ func (s *sqlStore) ListDataWithCondition(
 
 	if f := filter; f != nil {
 		if f.OwnerId > 0 {
-			db = db.Where("owner_id = ?", f.OwnerId)
+			db = db.Where("user_id = ?", f.OwnerId)
 		}
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, common.ErrDB(err)
+	}
+
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
 	}
 
 	if v := paging.FakeCursor; v != "" {
@@ -49,6 +53,8 @@ func (s *sqlStore) ListDataWithCondition(
 		id := strconv.Itoa(lastItem.ID)
 		paging.NextCursor = id
 	}
+
+	println("result: ", result)
 
 	return result, nil
 }

@@ -7,8 +7,9 @@ import (
 	userbusiness "food-delivery/module/user/business"
 	usermodel "food-delivery/module/user/model"
 	userstore "food-delivery/module/user/store"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Register(appCtx appcontext.AppContext) gin.HandlerFunc {
