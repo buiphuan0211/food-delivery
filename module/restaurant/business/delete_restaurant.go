@@ -31,6 +31,7 @@ func (b *deleteRestaurantBusiness) Delete(ctx context.Context, id int) error {
 		return common.ErrEntityNotFound(restaurantmodel.EntityName, err)
 	}
 
+	// Check permissions user
 	if oldData.UserId != b.requester.GetUserId() {
 		return common.ErrNoPermission(nil)
 	}

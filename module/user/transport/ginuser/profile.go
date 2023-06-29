@@ -3,8 +3,9 @@ package ginuser
 import (
 	"food-delivery/common"
 	"food-delivery/component/appcontext"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Profile(appCtx appcontext.AppContext) gin.HandlerFunc {

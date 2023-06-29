@@ -7,10 +7,11 @@ import (
 	"food-delivery/module/restaurant/transport/ginrestaurant"
 	"food-delivery/module/upload/transport/ginupload"
 	"food-delivery/module/user/transport/ginuser"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -76,6 +77,16 @@ func main() {
 	rg.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
 
 	rg.GET("", ginrestaurant.ListRestaurant(appCtx))
+
+	// Check roles
+	admin := v1.Group("/admin",
+		middleware.RequiredAuth(appCtx),
+		middleware.RoleRequired(appCtx, "admin", "user"),
+	)
+
+	{
+		admin.GET("/profile", ginuser.Profile(appCtx))
+	}
 
 	r.Run()
 }
