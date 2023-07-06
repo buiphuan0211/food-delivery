@@ -20,6 +20,7 @@ type Restaurant struct {
 	Cover           *common.Images     `json:"cover" gorm:"column:cover"`
 	UserId          int                `json:"-" gorm:"column:user_id"`
 	User            *common.SimpleUser `json:"user" gorm:"preload:false;"` // preload:false -> user bị insert theo khi create restaurant
+	LikeCount       int                `json:"like_count" gorm:"-"`
 }
 
 func (Restaurant) TableName() string {

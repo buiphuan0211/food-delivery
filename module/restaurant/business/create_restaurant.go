@@ -1,4 +1,4 @@
-package restaurantbusiness
+package restaurantbiz
 
 import (
 	"context"

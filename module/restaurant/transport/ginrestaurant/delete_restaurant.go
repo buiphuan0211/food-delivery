@@ -3,7 +3,7 @@ package ginrestaurant
 import (
 	"food-delivery/common"
 	"food-delivery/component/appcontext"
-	restaurantbusiness "food-delivery/module/restaurant/business"
+	restaurantbiz "food-delivery/module/restaurant/business"
 	restaurantstorage "food-delivery/module/restaurant/storgage"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -25,7 +25,7 @@ func DeleteRestaurant(appCtx appcontext.AppContext) gin.HandlerFunc {
 
 		store := restaurantstorage.NewSQLStore(db)
 
-		business := restaurantbusiness.NewDeleteRestaurantBusiness(store, requester)
+		business := restaurantbiz.NewDeleteRestaurantBusiness(store, requester)
 
 		if err := business.Delete(ctx, id); err != nil {
 			panic(err)

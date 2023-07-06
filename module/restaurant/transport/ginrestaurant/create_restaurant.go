@@ -3,7 +3,7 @@ package ginrestaurant
 import (
 	"food-delivery/common"
 	"food-delivery/component/appcontext"
-	restaurantbusiness "food-delivery/module/restaurant/business"
+	restaurantbiz "food-delivery/module/restaurant/business"
 	restaurantmodel "food-delivery/module/restaurant/model"
 	restaurantstorage "food-delivery/module/restaurant/storgage"
 	"net/http"
@@ -29,7 +29,7 @@ func CreateRestaurant(appCtx appcontext.AppContext) gin.HandlerFunc {
 
 		store := restaurantstorage.NewSQLStore(db)
 
-		business := restaurantbusiness.NewCreateRestaurantBusiness(store)
+		business := restaurantbiz.NewCreateRestaurantBusiness(store)
 
 		if err := business.CreateRestaurant(ctx, &data); err != nil {
 			panic(err)

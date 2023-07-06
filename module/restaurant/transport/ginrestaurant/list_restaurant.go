@@ -3,9 +3,10 @@ package ginrestaurant
 import (
 	"food-delivery/common"
 	"food-delivery/component/appcontext"
-	restaurantbusiness "food-delivery/module/restaurant/business"
+	restaurantbiz "food-delivery/module/restaurant/business"
 	restaurantmodel "food-delivery/module/restaurant/model"
 	restaurantstorage "food-delivery/module/restaurant/storgage"
+	restaurantlikestorage "food-delivery/module/restaurantlike/storage"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,9 @@ func ListRestaurant(appCtx appcontext.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantstorage.NewSQLStore(db)
-		business := restaurantbusiness.NewListRestaurantBusiness(store)
+		likeStore := restaurantlikestorage.NewSQLStore(db)
+
+		business := restaurantbiz.NewListRestaurantBusiness(store, likeStore)
 
 		result, err := business.ListRestaurant(ctx, &filter, &pagingData)
 		if err != nil {

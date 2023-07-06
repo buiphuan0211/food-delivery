@@ -4,9 +4,6 @@ import (
 	"food-delivery/component/appcontext"
 	"food-delivery/component/uploadprovider"
 	"food-delivery/middleware"
-	"food-delivery/module/restaurant/transport/ginrestaurant"
-	"food-delivery/module/upload/transport/ginupload"
-	"food-delivery/module/user/transport/ginuser"
 	"log"
 	"net/http"
 	"os"
@@ -59,34 +56,8 @@ func main() {
 		})
 	})
 
-	// Upload
-	v1.POST("/upload", ginupload.Upload(appCtx))
-
-	// Authenticate
-	v1.POST("/register", ginuser.Register(appCtx))
-
-	v1.POST("/login", ginuser.Login(appCtx))
-
-	v1.GET("/profile", middleware.RequiredAuth(appCtx), ginuser.Profile(appCtx))
-
-	// Restaurant
-	rg := v1.Group("/restaurants", middleware.RequiredAuth(appCtx))
-
-	rg.POST("", ginrestaurant.CreateRestaurant(appCtx))
-
-	rg.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
-
-	rg.GET("", ginrestaurant.ListRestaurant(appCtx))
-
-	// Check roles
-	admin := v1.Group("/admin",
-		middleware.RequiredAuth(appCtx),
-		middleware.RoleRequired(appCtx, "admin", "user"),
-	)
-
-	{
-		admin.GET("/profile", ginuser.Profile(appCtx))
-	}
+	setupRoute(appCtx, v1)
+	setupAdminRoute(appCtx, v1)
 
 	r.Run()
 }
