@@ -2,14 +2,12 @@ package restaurantbiz
 
 import (
 	"context"
-	"fmt"
 	"food-delivery/common"
 	restaurantmodel "food-delivery/module/restaurant/model"
-	"log"
 )
 
-type ListRestaurantStore interface {
-	ListDataWithCondition(
+type ListRestaurantRepo interface {
+	ListRestaurant(
 		ctx context.Context,
 		filter *restaurantmodel.Filter,
 		paging *common.Paging,
@@ -18,53 +16,30 @@ type ListRestaurantStore interface {
 }
 
 type LikeRestaurantStore interface {
-	GetRestaurantLikes(ctx context.Context, ids []int) (map[int]int, error)
+	GetRestaurantLikes(ctx context.Context, ids []int) (map[int]int, error) // map[int]int -> restaurantId, number user liked
 }
 
 type listRestaurantBiz struct {
-	store     ListRestaurantStore
-	likeStore LikeRestaurantStore
+	repo ListRestaurantRepo
 }
 
-func NewListRestaurantBusiness(store ListRestaurantStore, likeStore LikeRestaurantStore) *listRestaurantBiz {
+func NewListRestaurantBusiness(repo ListRestaurantRepo) *listRestaurantBiz {
 	return &listRestaurantBiz{
-		store:     store,
-		likeStore: likeStore,
+		repo: repo,
 	}
 }
 
+// ListRestaurant ...
 func (b *listRestaurantBiz) ListRestaurant(
 	ctx context.Context,
 	filter *restaurantmodel.Filter,
 	paging *common.Paging,
-	moreKeys ...string,
 ) (result []restaurantmodel.Restaurant, err error) {
-	result, err = b.store.ListDataWithCondition(ctx, filter, paging, "User")
+
+	result, err = b.repo.ListRestaurant(ctx, filter, paging)
 
 	if err != nil {
-		return
-	}
-
-	ids := make([]int, len(result))
-	for i := range ids {
-		ids[i] = result[i].ID
-	}
-
-	fmt.Println("b: ", b)
-	fmt.Println("b.likeStore: ", b.likeStore)
-
-	// FIXME: Giá trị b.like bị nil
-	likeMap, err := b.likeStore.GetRestaurantLikes(ctx, ids)
-	fmt.Println("check 2")
-
-	if err != nil {
-		fmt.Println("check 3")
-		log.Println(err)
-		return
-	}
-
-	for i, item := range result {
-		result[i].LikeCount = likeMap[item.ID]
+		return nil, common.ErrCanNotListEntity(restaurantmodel.EntityName, err)
 	}
 
 	return

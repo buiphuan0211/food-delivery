@@ -2,7 +2,6 @@ package restaurantlikestorage
 
 import (
 	"context"
-	"fmt"
 	"food-delivery/common"
 	restaurantlikemodel "food-delivery/module/restaurantlike/model"
 )
@@ -10,7 +9,6 @@ import (
 const timeLayout = "2006-01-02T15:04:05.999999"
 
 func (s *sqlStore) GetRestaurantLikes(ctx context.Context, ids []int) (map[int]int, error) {
-	fmt.Println("likeMap, err := b.likeStore.GetRestaurantLikes(ctx, ids)")
 
 	result := make(map[int]int)
 

@@ -29,6 +29,7 @@ func (s *sqlStore) ListDataWithCondition(
 		return nil, common.ErrDB(err)
 	}
 
+	// Preload table references
 	for i := range moreKeys {
 		db = db.Preload(moreKeys[i])
 	}
