@@ -18,6 +18,11 @@ Host github.com-Kozozom-AnBP
         User git
         HostName github.commm
         IdentityFile ~/.ssh/id_rsa
+        
+        
+        
+        
+        
 
 
 ```
