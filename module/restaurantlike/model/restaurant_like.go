@@ -11,7 +11,7 @@ const EntityName = "UserLikeRestaurant"
 type Like struct {
 	RestaurantID int                `json:"restaurant_id" gorm:"column:restaurant_id"`
 	UserID       int                `json:"user_id" gorm:"column:user_id"`
-	CreatedAt    time.Time          `json:"created_at" gorm:"column:created_at"`
+	CreatedAt    *time.Time         `json:"created_at" gorm:"column:created_at"`
 	User         *common.SimpleUser `json:"user" gorm:"preload:false"`
 }
 
@@ -26,5 +26,13 @@ func ErrCannotLikeRestaurant(err error) *common.AppError {
 		err,
 		fmt.Sprintf("Cannot like this restaurant"),
 		fmt.Sprintf("ErrCannotLikeRestaurant"),
+	)
+}
+
+func ErrCannotDisLikeRestaurant(err error) *common.AppError {
+	return common.NewCustomError(
+		err,
+		fmt.Sprintf("Cannot dislike this restaurant"),
+		fmt.Sprintf("ErrCannotDisLikeRestaurant"),
 	)
 }
