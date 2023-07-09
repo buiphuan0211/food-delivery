@@ -4,7 +4,6 @@ import (
 	"context"
 	"food-delivery/common"
 	restaurantmodel "food-delivery/module/restaurant/model"
-	"log"
 )
 
 type ListRestaurantStore interface {
@@ -16,19 +15,19 @@ type ListRestaurantStore interface {
 	) (result []restaurantmodel.Restaurant, err error)
 }
 
-type LikeRestaurantStore interface {
-	GetRestaurantLikes(ctx context.Context, ids []int) (map[int]int, error) // map[int]int -> restaurantId, number user liked
-}
+//type LikeRestaurantStore interface {
+//	GetRestaurantLikes(ctx context.Context, ids []int) (map[int]int, error) // map[int]int -> restaurantId, number user liked
+//}
 
 type listRestaurantRepo struct {
-	store     ListRestaurantStore
-	likeStore LikeRestaurantStore
+	store ListRestaurantStore
+	//likeStore LikeRestaurantStore
 }
 
-func NewListRestaurantRepo(store ListRestaurantStore, likeStore LikeRestaurantStore) *listRestaurantRepo {
+func NewListRestaurantRepo(store ListRestaurantStore) *listRestaurantRepo {
 	return &listRestaurantRepo{
-		store:     store,
-		likeStore: likeStore,
+		store: store,
+		//likeStore: likeStore,
 	}
 }
 
@@ -45,21 +44,21 @@ func (b *listRestaurantRepo) ListRestaurant(
 		return
 	}
 
-	ids := make([]int, len(result))
-	for i := range ids {
-		ids[i] = result[i].ID
-	}
-
-	likeMap, err := b.likeStore.GetRestaurantLikes(ctx, ids)
-
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	for i, item := range result {
-		result[i].LikeCount = likeMap[item.ID]
-	}
+	//ids := make([]int, len(result))
+	//for i := range ids {
+	//	ids[i] = result[i].ID
+	//}
+	//
+	//likeMap, err := b.likeStore.GetRestaurantLikes(ctx, ids)
+	//
+	//if err != nil {
+	//	log.Println(err)
+	//	return
+	//}
+	//
+	//for i, item := range result {
+	//	result[i].LikedCount = likeMap[item.ID]
+	//}
 
 	return
 }

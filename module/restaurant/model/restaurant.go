@@ -16,11 +16,11 @@ type Restaurant struct {
 	common.SQLModel `json:",inline"`
 	Name            string             `json:"name" gorm:"column:name;"`
 	Addr            string             `json:"addr" gorm:"column:addr;"`
-	Logo            *common.Image      `json:"logo" gorm:"column:logo"`
-	Cover           *common.Images     `json:"cover" gorm:"column:cover"`
 	UserId          int                `json:"-" gorm:"column:user_id"`
 	User            *common.SimpleUser `json:"user" gorm:"preload:false;"` // preload:false -> user bị insert theo khi create restaurant
-	LikeCount       int                `json:"like_count" gorm:"-"`
+	LikedCount      int                `json:"liked_count" gorm:"column:liked_count"`
+	//Cover           *common.Images     `json:"cover" gorm:"column:cover"`
+	//Logo            *common.Image      `json:"logo" gorm:"column:logo"`
 }
 
 func (Restaurant) TableName() string {

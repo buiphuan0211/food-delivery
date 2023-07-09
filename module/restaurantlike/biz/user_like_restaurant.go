@@ -2,19 +2,28 @@ package biz
 
 import (
 	"context"
+	"food-delivery/common"
 	restaurantlikemodel "food-delivery/module/restaurantlike/model"
+	"log"
 )
 
 type UserLikeRestaurantStore interface {
 	Create(ctx context.Context, data *restaurantlikemodel.Like) error
 }
-type userLikeRestaurantBiz struct {
-	store UserLikeRestaurantStore
+
+type InLikedCountResStore interface {
+	IncreaseLikesCount(tx context.Context, id int) error
 }
 
-func NewUserLikeRestaurantBiz(store UserLikeRestaurantStore) *userLikeRestaurantBiz {
+type userLikeRestaurantBiz struct {
+	store    UserLikeRestaurantStore
+	incStore InLikedCountResStore
+}
+
+func NewUserLikeRestaurantBiz(store UserLikeRestaurantStore, incStore InLikedCountResStore) *userLikeRestaurantBiz {
 	return &userLikeRestaurantBiz{
-		store: store,
+		store:    store,
+		incStore: incStore,
 	}
 }
 
@@ -24,5 +33,13 @@ func (biz *userLikeRestaurantBiz) LikeRestaurant(ctx context.Context, data *rest
 	if err != nil {
 		return restaurantlikemodel.ErrCannotLikeRestaurant(err)
 	}
+
+	go func() {
+		defer common.AppRecover()
+		if err := biz.incStore.IncreaseLikesCount(ctx, data.RestaurantID); err != nil {
+			log.Println(" Err IncreaseLikesCount: ", err)
+		}
+	}()
+
 	return nil
 }
