@@ -17,7 +17,6 @@ type Job interface {
 	Retry(ctx context.Context) error
 	State() JobState
 	SetRetryDuration(times []time.Duration)
-	TetRetryDuration(times []time.Duration)
 }
 
 const (
