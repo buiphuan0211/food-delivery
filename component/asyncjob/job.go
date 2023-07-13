@@ -40,7 +40,7 @@ const (
 	StateCompleted
 	StateRetryFailed
 )
-
+  
 func (js JobState) String() string {
 	return []string{"Init", "Running", "Failed", "Timeout", "Completed", "RetryFailed"}[js]
 }

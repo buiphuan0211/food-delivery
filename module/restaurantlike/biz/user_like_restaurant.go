@@ -2,7 +2,7 @@ package biz
 
 import (
 	"context"
-	"food-delivery/common"
+	"food-delivery/component/asyncjob"
 	restaurantlikemodel "food-delivery/module/restaurantlike/model"
 	"log"
 )
@@ -20,6 +20,7 @@ type userLikeRestaurantBiz struct {
 	incStore InLikedCountResStore
 }
 
+// NewUserLikeRestaurantBiz ...
 func NewUserLikeRestaurantBiz(store UserLikeRestaurantStore, incStore InLikedCountResStore) *userLikeRestaurantBiz {
 	return &userLikeRestaurantBiz{
 		store:    store,
@@ -34,12 +35,21 @@ func (biz *userLikeRestaurantBiz) LikeRestaurant(ctx context.Context, data *rest
 		return restaurantlikemodel.ErrCannotLikeRestaurant(err)
 	}
 
-	go func() {
-		defer common.AppRecover()
-		if err := biz.incStore.IncreaseLikesCount(ctx, data.RestaurantID); err != nil {
-			log.Println(" Err IncreaseLikesCount: ", err)
-		}
-	}()
+	// Side effect
+	j := asyncjob.NewJob(func(ctx context.Context) error {
+		return biz.incStore.IncreaseLikesCount(ctx, data.RestaurantID)
+	})
+
+	if err := asyncjob.NewGroup(true, j).Run(ctx); err != nil {
+		log.Println(err)
+	}
+
+	//go func() {
+	//	defer common.AppRecover()
+	//	if err := biz.incStore.IncreaseLikesCount(ctx, data.RestaurantID); err != nil {
+	//		log.Println(" Err IncreaseLikesCount: ", err)
+	//	}
+	//}()
 
 	return nil
 }
